@@ -53,6 +53,7 @@ function cmp($a, $b) {
 $url = "http://www.tesco.com/groceries/product/search/default.aspx?searchBox=regular+coke";
 $tesco = parseTesco(gcc($url));
 uasort($tesco, 'cmp');
+reset($tesco);
 ?>
 <html>
 <head>
@@ -62,11 +63,26 @@ uasort($tesco, 'cmp');
 <body>
 <p>Data sourced from <a href="<?=$url?>">Tesco</a>.</p>
 <p>All units in SI cans.</p>
+<p id="cans">Cans are currently 
+<?
+function cans($lis) {
+	foreach ($lis as $t) {
+		if (preg_match('/330 ?ml/i', $t->name))
+			return $t;
+	}
+}
+echo number_format(percan(cans($tesco))*100,1)
+?>
+p.</p>
 <table>
 <?
-reset($tesco);
+
+function percan($t) {
+	return 330*$t->cost/$t->ml;
+}
+
 foreach ($tesco as $t) {
-	$can = 330*$t->cost/$t->ml;
+	$can = percan($t);
 	echo "<tr>" .
 		"<td>" . preg_replace('/Coca Cola Regular/i', '', $t->name) . "</td>" .
 		"<td>£$t->cost</td>" .
