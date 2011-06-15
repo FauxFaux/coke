@@ -50,7 +50,7 @@ function parseTesco($content) {
 function cmp($a, $b) {
 	return ($a->cost/$a->ml) > ($b->cost/$b->ml);
 }
-$url = "http://www.tesco.com/groceries/product/search/default.aspx?searchBox=regular+coke";
+$url = 'http://www.tesco.com/groceries/product/search/default.aspx?searchBox=regular+"coca+cola"';
 $tesco = parseTesco(gcc($url));
 uasort($tesco, 'cmp');
 reset($tesco);
