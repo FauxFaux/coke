@@ -1,4 +1,5 @@
 <?
+
 function gcc($url) {
 	$hour = 60 * 60;
 	$cachetime = 5 * $hour;
@@ -29,10 +30,11 @@ function parseTesco($content) {
 			$u = new Unit();
 			$u->shop = 'tesco';
 			$u->name = $title;
-			if (preg_match('/(?:(\d+) ?X ?)?([\d.]+) ?(Ml|Li?te?r)/i', $title, $r)) {
+			if (preg_match('/(?:(\d+) ?X ?)?([\d.]+) ?(Mi?l(?:lilitre)?|Li?te?r)/i', $title, $r)) {
 				$u->form = $r[2] . strtolower($r[3]);
 				$u->units = max(1,$r[1]);
-				$u->ml = $u->units * $r[2] * (strtolower($r[3]) == 'ml' ? 1 : 1000);
+				$q = strtolower($r[3]);
+				$u->ml = $u->units * $r[2] * ($q == 'ml' || $q == 'millilitre' ? 1 : 1000);
 			}
 			$u->cost = $regs[4][$k];
 			$mul = $regs[2][$k];
@@ -41,6 +43,8 @@ function parseTesco($content) {
 				$u->units *= $mul;
 				$u->cost = $regs[3][$k]; 
 			}
+			if ($u->ml == 0)
+				echo htmlentities($title);
 			$ret[] = $u;
 		}
 	}
@@ -50,7 +54,7 @@ function parseTesco($content) {
 function cmp($a, $b) {
 	return ($a->cost/$a->ml) > ($b->cost/$b->ml);
 }
-$url = 'http://www.tesco.com/groceries/product/search/default.aspx?searchBox=regular+"coca+cola"';
+$url = 'http://www.tesco.com/groceries/product/search/default.aspx?searchBox=regular%20coca%20cola';
 $tesco = parseTesco(gcc($url));
 uasort($tesco, 'cmp');
 reset($tesco);
