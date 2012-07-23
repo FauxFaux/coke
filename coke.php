@@ -30,7 +30,7 @@ function parseTesco($content) {
 			$u = new Unit();
 			$u->shop = 'tesco';
 			$u->name = $title;
-			if (preg_match('/(?:(\d+) ?X ?)?([\d.]+) ?(Mi?l(?:lilitre)?|Li?te?r)/i', $title, $r)) {
+			if (preg_match('/(?:(\d+) ?X ?)?([\d.]+) ?((?:Mi?l(?:lilitre)?|Li?te?r)|L)/i', $title, $r)) {
 				$u->form = $r[2] . strtolower($r[3]);
 				$u->units = max(1,$r[1]);
 				$q = strtolower($r[3]);
@@ -88,7 +88,7 @@ function percan($t) {
 foreach ($tesco as $t) {
 	$can = percan($t);
 	echo "<tr>" .
-		"<td>" . preg_replace('/Coca Cola Regular/i', '', $t->name) . "</td>" .
+		"<td>" . preg_replace('/Co(?:ke|ca Cola) Regular/i', '', $t->name) . "</td>" .
 		"<td>£$t->cost</td>" .
 		"<td>£" . number_format($t->cost/$t->units, 2) . "/object</td>" .
 		"<td>" . number_format(100*$can,1) . "p/can</td>" .
